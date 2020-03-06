@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Tutoral1": {
+      "commandName": "Project",
+      "commandLineArgs": "http://www.pja.edu.pl"
+    }
+  }
+}
