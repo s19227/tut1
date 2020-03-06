@@ -3,27 +3,42 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Tutoral1
+namespace Tutorial1
 {
     class Program
     {
         public static async Task Main(string[] args)
         {
-            var websiteUrl = args[0];
+            var websiteUrl = args.Length > 0 ? args[0] : throw new ArgumentNullException();
+
             var httpClient = new HttpClient();
-            var response = await httpClient.GetAsync(websiteUrl);
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var htmlContent = await response.Content.ReadAsStringAsync();
+                var response = await httpClient.GetAsync(websiteUrl);
+                httpClient.Dispose();
 
-                var regex = new Regex("[a-z]+[a-z0-9]*@[a-z0-9]+\\.[a-z]+", RegexOptions.IgnoreCase);
-                var emailAddresses = regex.Matches(htmlContent);
-
-                foreach (var e in emailAddresses)
+                if (response.IsSuccessStatusCode)
                 {
-                    Console.WriteLine(e);
+                    var htmlContent = await response.Content.ReadAsStringAsync();
+
+                    var regex = new Regex("[a-z]+[a-z0-9]*@[a-z0-9]+\\.[a-z]+", RegexOptions.IgnoreCase);
+                    var emailAddresses = regex.Matches(htmlContent);
+
+                    if (emailAddresses.Count > 0)
+                    {
+
+                        foreach (var e in emailAddresses)
+                        {
+                            Console.WriteLine(e);
+                        }
+                    } else
+                    {
+                        Console.WriteLine("No email addresses found.");
+                    }
                 }
+            } catch (Exception)
+            {
+                Console.WriteLine("Error while downloading the page.");
             }
 
             Console.ReadKey();
